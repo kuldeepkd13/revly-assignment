@@ -13,6 +13,10 @@ require("dotenv").config();
 
 app.use(express.json());
 
+app.get("/" ,(req,res)=>{
+res.send({"message":"Real-Time Doubt Solving Platform"})
+})
+
 app.use("/user", userRoute);
 app.use("/doubt" , doubtRoute);
 app.use("/tutor" , tutorRoute)
@@ -55,7 +59,7 @@ setInterval(async () => {
     try {
        
         for (const tutorId of tutorIds) {
-            await axios.post('https://good-puce-llama-hose.cyclic.app/tutor/ping', { tutorId });
+            await axios.post('http://localhost:8080/tutor/ping', { tutorId });
         }
     } catch (error) {
         console.error('Error pinging tutors:', error);
