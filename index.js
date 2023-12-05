@@ -55,7 +55,7 @@ setInterval(async () => {
     try {
        
         for (const tutorId of tutorIds) {
-            await axios.post('http://localhost:8080/tutor/ping', { tutorId });
+            await axios.post('https://good-puce-llama-hose.cyclic.app/tutor/ping', { tutorId });
         }
     } catch (error) {
         console.error('Error pinging tutors:', error);
