@@ -13,16 +13,20 @@ require("dotenv").config();
 
 app.use(express.json());
 
+// Default route
 app.get("/" ,(req,res)=>{
 res.send({"message":"Real-Time Doubt Solving Platform"})
 })
 
+// User, doubt, and tutor routes
 app.use("/user", userRoute);
 app.use("/doubt" , doubtRoute);
 app.use("/tutor" , tutorRoute)
 
+// Start the server
 app.listen(process.env.port, async () => {
     try {
+        // Connect to MongoDB
         await connection;
         console.log("Connected to MongoDb");
     } catch (error) {
@@ -33,17 +37,21 @@ app.listen(process.env.port, async () => {
     console.log(`server is running at ${process.env.port}`);
 });
 
+
+// Array to store active tutor IDs
 const tutorIds = []; 
 
+
+// Interval for pinging tutors
 const pingInterval = 3000; 
 
 // Set up the CRON job to run every second
 cron.schedule('* * * * * *', async () => {
     try {
-        
+        // Find all active tutors
         const activeTutors = await UserModel.find({ userType: "Tutor", active: true });
 
-       
+       // Update the tutor IDs array
         tutorIds.length = 0; 
         activeTutors.forEach((tutor) => tutorIds.push(tutor._id));
 
@@ -54,10 +62,11 @@ cron.schedule('* * * * * *', async () => {
     }
 });
 
-// Run the ping job
+// Run the ping and updating the lastpingtime in every 3 sec
 setInterval(async () => {
     try {
-       
+        
+       // Ping each active tutor
         for (const tutorId of tutorIds) {
             await axios.post('https://graceful-gray-leggings.cyclic.app/tutor/ping', { tutorId });
         }
